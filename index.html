@@ -30,7 +30,7 @@
             </div>
         </div>
         <h1>(AI) Fitness Trainer</h1>
-        <button class="btn btn-primary"type="button" onclick="init()">Start</button>
+        <button class="bt!db159753n btn-primary"type="button" onclick="init()">Start</button>
         <div><canvas id="canvas"></canvas></div>
         <div id="label-container"></div>
     </div>
@@ -89,7 +89,7 @@
         window.requestAnimationFrame(loop);
     }
     var progress = 327
-    var status = "Up"
+    var status = "CU"
     var count = 0
     async function predict() {
         // Prediction #1: run input through posenet
@@ -98,7 +98,7 @@
         // Prediction 2: run input through teachable machine classification model
         const prediction = await model.predict(posenetOutput);
         if (prediction[0].probability.toFixed(2) > 0.90) {
-                if (status == "Down") {
+                if (status == "CD") {
                     count++
                     var audio = new Audio(count % 10 + '.mp3');
                     audio.play();
@@ -109,18 +109,30 @@
                     $('.progress').css('stroke-dashoffset', progress);
                     $('#counter').html(count);
                 }
-                status = "Up"
+                status = "CU"
             } else if (prediction[1].probability.toFixed(2) == 1.00) {
-                status = "Down"
+                status = "CD"
         }
         else if(prediction[2].probability.toFixed(2) == 1.00) {
-
-            status = "Short"
+            if (status == "CD" || status == "CU") {
+                    var audio = new Audio('WU.mp3');
+                    audio.play();
+                }
+                status = "WU"
         }
-            
+
         else if(prediction[3].probability.toFixed(2) == 1.00) {
-            status = "Wide"
-        }            
+            if (status == "CD" || status == "CU") {
+                    var audio = new Audio('WD.mp3');
+                    audio.play();
+                }
+                status = "WD"
+        }
+        
+        else if(prediction[4].probability.toFixed(2) == 1.00) {
+
+                status = "NULL"
+        }
 
         for (let i = 0; i < maxPredictions; i++) {
             const classPrediction =
